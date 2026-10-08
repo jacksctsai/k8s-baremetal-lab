@@ -1,4 +1,3 @@
-// server.js
 import express from 'express';
 import os from 'os';
 
@@ -29,4 +28,12 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
+});
+
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, closing HTTP server...');
+  server.close(() => {
+    console.log('HTTP server closed, exiting process.');
+    process.exit(0);
+  });
 });

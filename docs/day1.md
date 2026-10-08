@@ -1,6 +1,4 @@
-Notes
-
-Day 1
+# Day 1
 
 Initially, we use multipass to create three VMs on my mac, named cp, w1 and w2.
 Then we've created the scripts to do the followings on the three VMs:
@@ -9,7 +7,10 @@ Then we've created the scripts to do the followings on the three VMs:
 - install kubelet, kubeadm, and kubectl `install_kubeadm_kubelet_kubectl.sh`
 
 We use VM cp to create kubernetes cluster in the following command.
+
+```
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+```
 
 After kubernetes cluster is created, the `kubeadm join` command in the output is used on w1 and w2 but failed. It had to run as root to have the permission required.
 
@@ -26,7 +27,7 @@ Nodes stayed NotReady until the Flannel DaemonSet was running, which is expected
 Then we tested the pods with the nslookup command but it failed. I created a full report on the incident attached below.
 
 
-Symptom
+## Symptom
 
 `nslookup kubernetes.default` command failed across the pods.
 
@@ -36,7 +37,7 @@ $ kubectl run t --image=busybox --rm -it -- nslookup kubernetes.default
 ** server can't find kubernetes.default: SERVFAIL
 ```
 
-Investigation
+## Investigation
 
 Checked the CoreDNS log. CoreDNS does not recognize the domain name `kubernetes.default` so the query gets routed to the upstream DNS server `192.168.252.1`, and connection got refused.
 
@@ -48,11 +49,11 @@ ubuntu@cp:~$ kubectl -n kube-system logs -l k8s-app=kube-dns
 [ERROR] plugin/errors: 2 kubernetes.default. A: read udp 10.244.1.3:45671->192.168.252.1:53: i/o timeout
 ```
 
-Root cause
+## Root cause
 
 Cluster names like kubernetes.default.svc.cluster.local resolve inside CoreDNS. The short name kubernetes.default was sent without the search suffix, so CoreDNS forwarded it to the node's upstream 192.168.252.1, the Mac's VM network gateway, which refused queries coming from pods.
 
-Fix and verification
+## Fix and verification
 
 Forward to public resolvers instead of the node's upstream. Edit the CoreDNS config to specify the DNS resolver rather than relying on the upstream host DNS by the default configuration.
 

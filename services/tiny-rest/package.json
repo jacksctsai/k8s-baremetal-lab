@@ -1,0 +1,17 @@
+{
+  "name": "tiny-k8s-api",
+  "version": "1.0.0",
+  "description": "Minimal REST API with health and readiness probes",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "engines": {
+    "node": ">=20.19.4"
+  }
+}

@@ -11,8 +11,11 @@ npm install && npm start
 ## Build & Push (arm64)
 
 ```bash
-VERSION="v2.0.0"
-docker build --platform linux/arm64 --build-arg APP_VERSION="${VERSION}" -t ghcr.io/jacksctsai/hello-api:${VERSION} .
+docker build --platform linux/arm64 \
+  --build-arg APP_VERSION="$(git describe --tags --always)" \
+  --build-arg GIT_COMMIT="$(git rev-parse --short HEAD)" \
+  --build-arg BUILD_TIME="$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+  -t ghcr.io/jacksctsai/hello-api:$(git rev-parse --short HEAD) .
 docker push ghcr.io/jacksctsai/hello-api:${VERSION}
 ```
 

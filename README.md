@@ -35,10 +35,13 @@ sudo kubeadm join ...
 | # | Incident | Root cause |
 |---|----------|------------|
 | 1 | [Pods can't resolve external names](docs/day1.md) | CoreDNS forwarded to the VM gateway's DNS, which refused queries from pods |
+| 2 | [Pod deletion took ~30s](docs/day2.md) | Node as PID 1 ignored SIGTERM with no handler, so kubelet waited out the 30s grace period and then sent SIGKILL |
+| 3 | [Requests dropped during rolling update](docs/day2.md) | The pod stopped serving before endpoint removal reached kube-proxy on every node; fixed with a `preStop` sleep |
+
 
 ## Roadmap
 - [x] kubeadm cluster from scratch, CNI, DNS verified
-- [ ] REST service: Deployment, Service, ConfigMap, probes, limits, rolling update and rollback
+- [x] REST service: Deployment, Service, ConfigMap, probes, limits, rolling update and rollback
 - [ ] Break-fix drills: OOMKilled, ImagePullBackOff, node NotReady, PVC Pending
 - [ ] Helm chart and GitOps with Argo CD
 - [ ] Monitoring with kube-prometheus-stack

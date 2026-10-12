@@ -5,4 +5,4 @@ metadata:
   labels:
     app.kubernetes.io/name: hello-api
 data:
-  GREETING: "Hello from Kubernetes NodePort!"
+  GREETING: "Hello from Kubernetes NodePort! Aloha!"

@@ -21,10 +21,7 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "sleep 5"]
-          preStop:
-            exec:
-              command: ["/bin/sh", "-c", "sleep 5"]
+                command: ["sleep", "5"]
           ports:
             - name: http
               containerPort: 8080

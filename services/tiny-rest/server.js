@@ -30,14 +30,14 @@ app.get('/', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 
 process.on('SIGTERM', () => {
   console.log('Received SIGTERM, closing HTTP server...');
   server.close(() => {
-    console.log('HTTP server closed, exiting process.');
+    console.log('HTTP server closed');
     process.exit(0);
   });
 });

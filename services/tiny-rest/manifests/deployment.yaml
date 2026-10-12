@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: hello-api
-          image: ghcr.io/jacksctsai/hello-api:v1.0.1
-          imagePullPolicy: IfNotPresentlifecycle:
+          image: ghcr.io/jacksctsai/hello-api:v2.0.1
+          imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
               exec:

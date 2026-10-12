@@ -11,8 +11,9 @@ npm install && npm start
 ## Build & Push (arm64)
 
 ```bash
-docker build --platform linux/arm64 -t ghcr.io/jacksctsai/hello-api:v1 .
-docker push ghcr.io/jacksctsai/hello-api:v1
+VERSION="v2.0.0"
+docker build --platform linux/arm64 --build-arg APP_VERSION="${VERSION}" -t ghcr.io/jacksctsai/hello-api:${VERSION} .
+docker push ghcr.io/jacksctsai/hello-api:${VERSION}
 ```
 
 ## Deploy

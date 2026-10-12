@@ -7,8 +7,13 @@ ENV NODE_ENV=production
 WORKDIR /app
 
 # Accept version at build time with a fallback default
-ARG APP_VERSION=1.0.1
-ENV APP_VERSION=$APP_VERSION
+ARG GIT_COMMIT=unknown
+ARG BUILD_TIME=unknown
+ARG APP_VERSION=dev
+
+ENV GIT_COMMIT=$GIT_COMMIT \
+    BUILD_TIME=$BUILD_TIME \
+    APP_VERSION=$APP_VERSION
 ENV PORT=8080
 
 # Copy dependency definitions first to leverage layer caching

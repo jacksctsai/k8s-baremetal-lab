@@ -4,6 +4,8 @@ import os from 'os';
 const app = express();
 const PORT = process.env.PORT || 8080;
 const APP_VERSION = process.env.APP_VERSION || '1.0.0';
+const GIT_COMMIT = process.env.GIT_COMMIT || 'N/A';
+const BUILD_TIME = process.env.BUILD_TIME || 'N/A';
 const GREETING = process.env.GREETING || 'Hello, World!';
 
 // Liveness probe
@@ -22,6 +24,8 @@ app.get('/', (req, res) => {
   res.status(200).json({
     greeting: GREETING,
     version: APP_VERSION,
+    commit: GIT_COMMIT,
+    buildAt: BUILD_TIME,
     hostname: os.hostname() // Returns the Pod name in Kubernetes
   });
 });

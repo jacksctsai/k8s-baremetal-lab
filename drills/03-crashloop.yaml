@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crashloop
+  namespace: drills
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: crashloop}
+  template:
+    metadata:
+      labels: {app: crashloop}
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/jacksctsai/hello-api:v2.0.1
+          command: ["sh", "-c", "exit 1"]

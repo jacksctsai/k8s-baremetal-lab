@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: readiness-fail
+  namespace: drills
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: readiness-fail}
+  template:
+    metadata:
+      labels: {app: readiness-fail}
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/jacksctsai/hello-api:v2.0.1
+          readinessProbe:
+            httpGet:
+              path: /nope
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 2

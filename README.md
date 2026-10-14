@@ -3,7 +3,7 @@
 A self-built kubeadm cluster I use to practice deploying, operating, and troubleshooting Kubernetes the way a platform team does day-2 work.
 
 ## Why
-I'm a backend and systems architect with many years of shipping and running production systems. This lab is where I build hands-on Kubernetes operations skill: building the cluster from scratch, breaking it on purpose, and writing up each incident.
+I'm a backend and systems architect with a track record of shipping and running production systems. This lab is where I build hands-on Kubernetes operations skill: building the cluster from scratch, breaking it on purpose, and writing up each incident.
 
 ## Cluster
 | Node | Role          | vCPU | RAM | OS                    |
@@ -38,11 +38,12 @@ sudo kubeadm join ...
 | 2 | [Pod deletion took ~30s](docs/day2.md) | Node as PID 1 ignored SIGTERM with no handler, so kubelet waited out the 30s grace period and then sent SIGKILL |
 | 3 | [Requests dropped during rolling update](docs/day2.md) | The pod stopped serving before endpoint removal reached kube-proxy on every node; fixed with a `preStop` sleep |
 
+Eight break-fix drills live in [drills/](drills/README.md).
 
 ## Roadmap
 - [x] kubeadm cluster from scratch, CNI, DNS verified
 - [x] REST service: Deployment, Service, ConfigMap, probes, limits, rolling update and rollback
-- [ ] Break-fix drills: OOMKilled, ImagePullBackOff, node NotReady, PVC Pending
+- [x] Break-fix drills: ImagePullBackOff, OOMKilled, CrashLoopBackOff, unschedulable pod, Service selector mismatch, failing readiness probe, PVC Pending, node NotReady
 - [ ] Helm chart and GitOps with Argo CD
 - [ ] Monitoring with kube-prometheus-stack
 - [ ] Node provisioning with Ansible; in-place version upgrade

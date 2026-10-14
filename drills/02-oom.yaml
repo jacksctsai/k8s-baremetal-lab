@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oom
+  namespace: drills
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: oom}
+  template:
+    metadata:
+      labels: {app: oom}
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/jacksctsai/hello-api:v2.0.1
+          command: ["node", "-e", "const b = Buffer.alloc(64*1024*1024).fill(1); setInterval(() => {}, 1000)"]
+          resources:
+            requests:
+              memory: "16Mi"
+            limits:
+              memory: "32Mi"

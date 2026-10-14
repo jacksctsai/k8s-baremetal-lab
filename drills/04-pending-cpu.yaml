@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pending-cpu
+  namespace: drills
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: pending-cpu}
+  template:
+    metadata:
+      labels: {app: pending-cpu}
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/jacksctsai/hello-api:v2.0.1
+          resources:
+            requests:
+              cpu: "6"

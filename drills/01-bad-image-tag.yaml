@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bad-tag
+  namespace: drills
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bad-tag}
+  template:
+    metadata:
+      labels: {app: bad-tag}
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/jacksctsai/hello-api:v9.9.9   # doesn't exist
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bad-tag
+  namespace: drills
+spec:
+  selector: {app: bad-tag}
+  ports:
+    - port: 80
+      targetPort: 8080

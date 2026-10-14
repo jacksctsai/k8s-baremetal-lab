@@ -157,7 +157,7 @@ user  0m0.120s
 sys 0m0.093s
 ```
 
-Another issue we noticed is the curl log would stop by itself sometimes that I hae to restart the curl log. It happened right when an old pod was shutting down. The likely cause: the pod stopped accepting connections before kube-proxy had removed it from the Service's endpoints. We added the `preStop` hook to the `deployment.manifest` so the kubelet would wait 5 seconds before sending SIGTERM to the Node.js app. The 5-second sleep keeps the app serving until every node has caught up, and only then does SIGTERM arrive.
+Another issue we noticed is the curl log the requests failed with 000 sometimes that I have to restart the curl log. It happened right when an old pod was shutting down. The likely cause: the pod stopped accepting connections before kube-proxy had removed it from the Service's endpoints. We added the `preStop` hook to the `deployment.manifest` so the kubelet would wait 5 seconds before sending SIGTERM to the Node.js app. The 5-second sleep keeps the app serving until every node has caught up, and only then does SIGTERM arrive.
 
 ```deployment.manifest
 (...)

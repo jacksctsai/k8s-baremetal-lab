@@ -22,7 +22,7 @@ docker push ghcr.io/jacksctsai/hello-api:$(git describe --tags --always)
 ## Deploy
 
 ```bash
-kubectl apply -f manifests/
+helm install hello-api ../../charts/hello-api
 ```
 
 Access via any node IP on port `30080`.

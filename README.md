@@ -31,12 +31,20 @@ kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/
 sudo kubeadm join ...
 ```
 
+## Deploy the app
+The `hello-api` service is packaged as a Helm chart in [charts/hello-api](charts/hello-api).
+
+```bash
+helm install hello-api charts/hello-api
+```
+
 ## Incident log
 | # | Incident | Root cause |
 |---|----------|------------|
 | 1 | [Pods can't resolve external names](docs/day1.md) | CoreDNS forwarded to the VM gateway's DNS, which refused queries from pods |
 | 2 | [Pod deletion took ~30s](docs/day2.md) | Node as PID 1 ignored SIGTERM with no handler, so kubelet waited out the 30s grace period and then sent SIGKILL |
 | 3 | [Requests dropped during rolling update](docs/day2.md) | The pod stopped serving before endpoint removal reached kube-proxy on every node; fixed with a `preStop` sleep |
+| 4 | [Helm couldn't adopt existing resources](docs/day4.md) | Deployment selectors are immutable and the old Service held NodePort 30080; cut over with a delete and reinstall |
 
 Eight break-fix drills live in [drills/](drills/README.md).
 
@@ -44,7 +52,8 @@ Eight break-fix drills live in [drills/](drills/README.md).
 - [x] kubeadm cluster from scratch, CNI, DNS verified
 - [x] REST service: Deployment, Service, ConfigMap, probes, limits, rolling update and rollback
 - [x] Break-fix drills: ImagePullBackOff, OOMKilled, CrashLoopBackOff, unschedulable pod, Service selector mismatch, failing readiness probe, PVC Pending, node NotReady
-- [ ] Helm chart and GitOps with Argo CD
+- [x] Helm chart: templated values, config-checksum rollouts, upgrade and rollback
+- [ ] GitOps with Argo CD
 - [ ] Monitoring with kube-prometheus-stack
 - [ ] Node provisioning with Ansible; in-place version upgrade
 - [ ] Raspberry Pi 5 joins as a physical arm64 worker

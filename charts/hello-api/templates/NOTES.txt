@@ -1,0 +1,3 @@
+Get the application URL:
+  export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:{{ .Values.service.nodePort }}

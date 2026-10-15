@@ -1,0 +1,1 @@
+Raw manifests from Day 2, kept for reference.

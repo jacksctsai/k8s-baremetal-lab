@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hello-api
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/jacksctsai/k8s-baremetal-lab
+    targetRevision: main
+    path: charts/hello-api
+    helm:
+      releaseName: hello-api
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default

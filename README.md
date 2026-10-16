@@ -45,6 +45,7 @@ helm install hello-api charts/hello-api
 | 2 | [Pod deletion took ~30s](docs/day2.md) | Node as PID 1 ignored SIGTERM with no handler, so kubelet waited out the 30s grace period and then sent SIGKILL |
 | 3 | [Requests dropped during rolling update](docs/day2.md) | The pod stopped serving before endpoint removal reached kube-proxy on every node; fixed with a `preStop` sleep |
 | 4 | [Helm couldn't adopt existing resources](docs/day4.md) | Deployment selectors are immutable and the old Service held NodePort 30080; cut over with a delete and reinstall |
+| 5 | [Argo CD showed hello-api OutOfSync](docs/day5.md) | `service.targetPort` was never committed to `values.yaml`, so the chart from git rendered `containerPort: 0`; GitOps only deploys what's in git |
 
 Eight break-fix drills live in [drills/](drills/README.md).
 

@@ -54,7 +54,7 @@ Eight break-fix drills live in [drills/](drills/README.md).
 - [x] REST service: Deployment, Service, ConfigMap, probes, limits, rolling update and rollback
 - [x] Break-fix drills: ImagePullBackOff, OOMKilled, CrashLoopBackOff, unschedulable pod, Service selector mismatch, failing readiness probe, PVC Pending, node NotReady
 - [x] Helm chart: templated values, config-checksum rollouts, upgrade and rollback
-- [ ] GitOps with Argo CD
+- [x] GitOps with Argo CD
 - [ ] Monitoring with kube-prometheus-stack
 - [ ] Node provisioning with Ansible; in-place version upgrade
 - [ ] Raspberry Pi 5 joins as a physical arm64 worker

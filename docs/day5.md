@@ -115,7 +115,7 @@ sh.helm.release.v1.hello-api.v2   helm.sh/release.v1   1      29h
 sh.helm.release.v1.hello-api.v3   helm.sh/release.v1   1      29h
 ```
 
-As expected there are three revisions, one Secret each. We will delete those Secrets to removes Helm's memory of the release. The resources keep their Helm labels and meta.helm.sh annotations. That's fine, because Argo CD renders the same labels from the chart and ignores those annotations.
+As expected there are three revisions, one Secret each. We will delete those Secrets to remove Helm's memory of the release. The resources keep their Helm labels and meta.helm.sh annotations. That's fine, because Argo CD renders the same labels from the chart and ignores those annotations.
 
 ```
 $ kubectl -n default delete secret -l owner=helm,name=hello-api
@@ -157,7 +157,7 @@ GROUP  KIND        NAMESPACE  NAME              STATUS  HEALTH   HOOK  MESSAGE
 apps   Deployment  default    hello-api         Synced  Healthy
 ```
 
-Then we turn on auto-sync and self-heal in git by add `syncPolicy` under `spec:` in `argocd/hello-api.yaml`.
+Then we turn on auto-sync and self-heal in git by adding `syncPolicy` under `spec:` in `argocd/hello-api.yaml`.
 
 ```
   syncPolicy:
@@ -166,7 +166,7 @@ Then we turn on auto-sync and self-heal in git by add `syncPolicy` under `spec:`
       selfHeal: true
 ```
 
-We then need to apply the edits by `kubectl apply -n argocd -f argocd/hello-api.yaml` since the Application object itself isn't managed by Argo CD.
+After `git commit` and `git push`, we then need to apply the edits by `kubectl apply -n argocd -f argocd/hello-api.yaml` since the Application object itself isn't managed by Argo CD.
 
 
 ### Self-heal Test
@@ -188,7 +188,7 @@ hello-api   2/3     3            2           29h
 hello-api   3/3     3            3           29h
 ```
 
-We can actually see a history record from Argo CD CLI.
+History shows the sync of 79fc094; the heal itself shows up in the app's events in the UI.
 
 ```
 $ argocd app history hello-api
@@ -197,12 +197,70 @@ ID      DATE                           REVISION
 0       2026-10-16 17:46:08 +0800 CST  main (79fc094)
 ```
 
-And for more detail we can get it from the Argo CD API server UI.
-
 ![Argo CD Application Healed (case 1)](images/day5-ArgoCD-application-healed-case-1.png)
 
 
 ### Scaling-up Test
 
-Let's change `replicaCount` to 4 in [values.yaml](../charts/hello-api/values.yaml) in git and see how it roll out without manual sync.
+Let's change `replicaCount` to 4 in [values.yaml](../charts/hello-api/values.yaml) in git and see how it rolls out without manual sync.
 
+
+```
+$ sed -i '' 's/^replicaCount: .*/replicaCount: 4/' charts/hello-api/values.yaml
+
+$ git --no-pager diff charts/hello-api/values.yaml
+diff --git a/charts/hello-api/values.yaml b/charts/hello-api/values.yaml
+index cc02fdc..800da23 100644
+--- a/charts/hello-api/values.yaml
++++ b/charts/hello-api/values.yaml
+@@ -1,4 +1,4 @@
+-replicaCount: 3
++replicaCount: 4
+
+ image:
+   repository: ghcr.io/jacksctsai/hello-api
+
+$ git commit -am "Scale hello-api to 4 replicas via GitOps"
+[main cdd74c3] Scale hello-api to 4 replicas via GitOps
+ 2 files changed, 109 insertions(+), 1 deletion(-)
+
+$ git push
+
+$ kubectl -n default get deploy hello-api -w
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+hello-api   3/3     3            3           29h
+
+$ argocd app get hello-api --refresh
+Name:               argocd/hello-api
+Project:            default
+Server:             https://kubernetes.default.svc
+Namespace:          default
+URL:                https://127.0.0.1:8080/applications/hello-api
+Source:
+- Repo:             https://github.com/jacksctsai/k8s-baremetal-lab
+  Target:           main
+  Path:             charts/hello-api
+SyncWindow:         Sync Allowed
+Sync Policy:        Automated (Prune)
+Sync Status:        OutOfSync from main (cdd74c3)
+Health Status:      Healthy
+
+GROUP  KIND        NAMESPACE  NAME              STATUS     HEALTH   HOOK  MESSAGE
+       ConfigMap   default    hello-api-config  Synced
+       Service     default    hello-api         Synced     Healthy
+apps   Deployment  default    hello-api         OutOfSync  Healthy
+
+$ kubectl -n default get deploy hello-api -w
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+hello-api   3/4     4            3           29h
+hello-api   4/4     4            4           29h
+```
+
+After the refresh, Argo CD auto-synced `cdd74c3` and the 4th pod came up with no manual sync.
+
+
+### Lessons
+
+- GitOps only deploys what's committed; anything in the cluster that isn't in git shows up as drift.
+- To hand a Helm release to Argo CD, delete Helm's release secrets; `helm uninstall` would delete the app.
+- The Application object itself isn't managed by Argo CD, so changes to it are applied by hand.
